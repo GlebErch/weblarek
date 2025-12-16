@@ -1,4 +1,4 @@
-import { ApiResponse, IProduct, IApi, ApiPostMethods } from "../../types";
+import { ApiResponse, IProduct, IApi } from "../../types";
 import { Api } from "../base/Api";
 
 export class ShopAPI extends Api implements IApi {
