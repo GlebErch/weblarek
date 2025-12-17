@@ -2,10 +2,10 @@ import { IBuyer, TPayment, TValidationErrors } from "../../types/index";
 
 
 export class ModelBuyer {
-  protected _buyer: IBuyer;
+  protected buyer: IBuyer;
 
   constructor() {
-    this._buyer = {
+    this.buyer = {
       address: "",
       email: "",
       payment: "",
@@ -14,27 +14,27 @@ export class ModelBuyer {
   }
 
   setPayment(payment: TPayment): void {
-    this._buyer.payment = payment;
+    this.buyer.payment = payment;
   }
 
   setEmail(email: string): void {
-    this._buyer.email = email;
+    this.buyer.email = email;
   }
 
   setPhone(phone: string): void {
-    this._buyer.phone = phone;
+    this.buyer.phone = phone;
   }
 
   setAddress(address: string): void {
-    this._buyer.address = address;
+    this.buyer.address = address;
   }
 
   getBuyer(): IBuyer {
-    return this._buyer;
+    return this.buyer;
   }
 
   clearBuyer(): void {
-    this._buyer = {
+    this.buyer = {
       address: "",
       email: "",
       payment: "",
@@ -44,16 +44,16 @@ export class ModelBuyer {
 
   validateBuyer(): TValidationErrors {
     const errors: TValidationErrors = {};
-    if (!this._buyer.payment) {
+    if (!this.buyer.payment) {
       errors.payment = "Не выбран способ оплаты";
     }
-    if (!this._buyer.address) {
+    if (!this.buyer.address) {
       errors.address = "Не указан адрес доставки";
     }
-    if (!this._buyer.email) {
+    if (!this.buyer.email) {
       errors.email = "Не указан email";
     }
-    if (!this._buyer.phone) {
+    if (!this.buyer.phone) {
       errors.phone = "Не указан телефон";
     }
     return errors;
