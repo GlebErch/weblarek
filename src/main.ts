@@ -13,7 +13,7 @@ const basketModel = new ModelBasket();
 const buyerModel = new ModelBuyer();
 const baseApi = new Api(API_URL);
 const api = new ShopAPI(baseApi, CDN_URL);
-let item: IProduct | undefined;
+let item: IProduct ;
 
 /*Проверка модуля каталога*/
 console.log("----------------Проверяем работу модуля каталога----------------");
@@ -81,7 +81,7 @@ buyerModel.setAddress("г. Урюпинск, ул. Ленина, д.1");
 console.log("Проверяем пользователя", buyerModel.validateBuyer());
 console.log("Добавляем телефон покупателя +79000888555");
 buyerModel.setPhone("+79000888555");
-console.log("Добавляем email покупателя");
+console.log("Добавляем email покупателя Vanya@mail.ru");
 buyerModel.setEmail("Vanya@mail.ru");
 console.log("Проверяем данные пользователя", buyerModel.validateBuyer());
 console.log("Получаем данные пользователя", buyerModel.getBuyer());
