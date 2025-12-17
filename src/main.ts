@@ -3,7 +3,7 @@ import { ModelCatalog } from "./components/models/modelcatalog.ts";
 import { ModelBasket } from "./components/models/modelbasket.ts";
 import { ModelBuyer } from "./components/models/modelbuyer.ts";
 import { apiProducts } from "./utils/data";
-import { IOrder, IProduct } from "./types";
+import { IProduct } from "./types";
 import { ShopAPI } from "./components/extend/ShopAPIi.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
 import { Api } from "./components/base/Api.ts";
@@ -14,7 +14,6 @@ const buyerModel = new ModelBuyer();
 const baseApi = new Api(API_URL);
 const api = new ShopAPI(baseApi, CDN_URL);
 let item: IProduct | undefined;
-let order: IOrder;
 
 /*Проверка модуля каталога*/
 console.log("----------------Проверяем работу модуля каталога----------------");
