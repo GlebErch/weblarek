@@ -1,6 +1,5 @@
 import { IBuyer, TPayment, TValidationErrors } from "../../types/index";
 
-
 export class ModelBuyer {
   protected buyer: IBuyer;
 

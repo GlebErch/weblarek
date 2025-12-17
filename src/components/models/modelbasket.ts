@@ -11,13 +11,13 @@ export class ModelBasket {
     return this.basket;
   }
 
-  addToBasket(item: IProduct | undefined): void {
+  addToBasket(item: IProduct): void {
     if (item) {
       this.basket.push(item);
     }
   }
 
-  removeFromBasket(item: IProduct | undefined): void {
+  removeFromBasket(item: IProduct): void {
     if (item) {
       this.basket = this.basket.filter((basket) => basket.id !== item.id);
     }
@@ -35,7 +35,7 @@ export class ModelBasket {
     return this.basket.length;
   }
 
-  isInBasket(item: IProduct | undefined): boolean {
+  isInBasket(item: IProduct): boolean {
     return item ? this.basket.includes(item) : false;
   }
 }

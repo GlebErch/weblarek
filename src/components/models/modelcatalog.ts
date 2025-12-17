@@ -10,7 +10,6 @@ export class ModelCatalog {
   }
 
   loadItems(items: IProduct[]): void {
-    this.items=[];
     this.items = items;
   }
 
@@ -18,17 +17,24 @@ export class ModelCatalog {
     return this.items;
   }
 
-  getProduct(cardId: string): IProduct | undefined {
-    return this.items.find((item) => item.id === cardId);
+  getProduct(cardId: string): IProduct {
+    const item = this.items.find((item) => item.id === cardId);
+    if (!item) {
+      throw new Error(`Товар с ID ${cardId} не найден`);
+    }
+    return item;
   }
-
-  setCurrent(item: IProduct | undefined): void {
+  setCurrent(item: IProduct): void {
     if (item) {
       this.current = item.id;
     }
   }
 
-  getCurrent(): IProduct | undefined {
-    return this.current ? this.getProduct(this.current) : undefined;
+  getCurrent(): IProduct {
+    const item = this.current;
+    if (!item) {
+      throw new Error(`Карточка не выбрана`);
+    }
+    return this.getProduct(item);
   }
 }

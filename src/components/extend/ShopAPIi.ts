@@ -1,23 +1,25 @@
-import { ApiResponse, IProduct, IApi } from "../../types";
-import { Api } from "../base/Api";
+import { ApiResponse, IProduct, IApi, IOrderResult, IOrder } from "../../types";
+//import { Api } from "../base/Api";
 
-export class ShopAPI extends Api implements IApi {
+export class ShopAPI {
   private cdn: string;
-  constructor(baseUrl: string, cdn: string, options: RequestInit = {}) {
-    super(baseUrl, options);
+  private api: IApi;
+
+  constructor(api: IApi, cdn: string) {
+    this.api = api;
     this.cdn = cdn;
   }
 
   getCatalog(): Promise<IProduct[]> {
-    return this.get<ApiResponse<IProduct>>("/product").then((data) => {
-      return data.items.map((item) => ({
+    return this.api.get<ApiResponse>("/product").then((response) => {
+      return response.items.map((item) => ({
         ...item,
-        image: this.cdn + item.image, // ← ВЕРНИ ЭТО!
+        image: this.cdn + item.image,
       }));
     });
   }
-  /*
-postOrder(): Promise<IOrder> {
-    
-}*/
+
+  postOrder(order: IOrder): Promise<IOrderResult> {
+    return this.api.post("/order", order);
+  }
 }
