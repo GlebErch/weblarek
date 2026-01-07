@@ -1,16 +1,20 @@
 import { IProduct } from "../../types/index";
+import { IEvents } from "../base/Events";
 
 export class ModelCatalog {
   protected items: IProduct[];
   protected current: string | null;
+  protected events: IEvents;
 
-  constructor() {
+  constructor(events: IEvents) {
     this.items = [];
     this.current = null;
+    this.events = events;
   }
 
   loadItems(items: IProduct[]): void {
     this.items = items;
+    this.events.emit("initialData:loaded", { items: this.items });
   }
 
   getItems(): IProduct[] {
@@ -24,9 +28,11 @@ export class ModelCatalog {
     }
     return item;
   }
+
   setCurrent(item: IProduct): void {
     if (item) {
       this.current = item.id;
+      this.events.emit("current:changed", item);
     }
   }
 

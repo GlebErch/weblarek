@@ -39,7 +39,7 @@ export type ApiResponse = {
 };
 
 export interface IOrder extends IBuyer {
-  id: string[];
+  items: string[];
   total: number;
 }
 
@@ -47,3 +47,11 @@ export interface IOrderResult {
   id: string;
   total: number;
 }
+
+export interface IActions {
+  onClick: (event: MouseEvent) => void;
+}
+
+export type TOrderFormInfo = Pick<IBuyer, "payment" | "address">; // тип для формы оплаты
+
+export type TContactFormInfo = Pick<IBuyer, "email" | "phone">; // тип для формы контактных данных

@@ -1,15 +1,18 @@
 import { IBuyer, TPayment, TValidationErrors } from "../../types/index";
+import { IEvents } from "../base/Events";
 
 export class ModelBuyer {
   protected buyer: IBuyer;
+  protected events: IEvents;
 
-  constructor() {
+  constructor(events: IEvents) {
     this.buyer = {
       address: "",
       email: "",
       payment: "",
       phone: "",
     };
+    this.events = events;
   }
 
   setPayment(payment: TPayment): void {
@@ -55,6 +58,8 @@ export class ModelBuyer {
     if (!this.buyer.phone) {
       errors.phone = "Не указан телефон";
     }
+    this.events.emit("FormErrors:validate", errors);
+
     return errors;
   }
 }

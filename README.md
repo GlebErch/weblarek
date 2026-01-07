@@ -106,7 +106,7 @@ Presenter - презентер содержит основную логику п
 `emit<T extends object>(event: string, data?: T): void` - инициализация события. При вызове события в метод передается название события и объект с данными, который будет использован как аргумент для вызова обработчика.  
 `trigger<T extends object>(event: string, context?: Partial<T>): (data: T) => void` - возвращает функцию, при вызове которой инициализируется требуемое в параметрах событие с передачей в него данных из второго параметра.
 
-### Слой Model
+### Слой моделей данных
 
 #### Интерфейсы
 
@@ -131,14 +131,9 @@ address: string; // Адрес доставки
 Тип выбора способа оплаты
 export type TPayment = 'card' | 'cash' | '';
 
-export type TBuyerError = {
-payment: "",
-email: "",
-phone: "",
-address: "",
-}
+Тип ошибок валидации полей пользователя
+export type TValidationErrors = Partial<Record<keyof IBuyer, string>>;
 
-### Модели данных
 
 #### Класс ModelCatalog
 
@@ -156,6 +151,10 @@ address: "",
 `getProduct(cardId: string): IProduct | undefined` - получает товар из каталога по его id
 `setCurrent(item: IProduct): void` - сохраняет текущий просматриваемый товар
 `getCurrent(): IProduct|undefined` - получает текущий просматриваемый товар
+
+Инициирует события: 
+initialData:loaded - первичная загрузка данных
+current:changed - изменение текущей выбранной карточки
 
 #### Класс ModelBasket
 
@@ -175,6 +174,9 @@ address: "",
 `countBasket(): number` - получает количество всех товаров в корзине
 `isInBasket(item: IProduct): boolean` - проверяет наличие товара в корзине
 
+Инициирует событие: 
+basket:change - изменение состава корзины
+
 #### Класс ModelBuyer
 
 Класс отвечает за работу с данными покупателя.
@@ -191,10 +193,32 @@ address: "",
 `setAddress(address: string): void` - изменяет адрес доставки
 `getBuyer(): IBuyer` - получает все данные пользователя
 `clearBuyer(): void` - очищает данные пользователя
-`validateBuyer(): TBuyerError` - проводит валидацию данных покупателя
+`validateBuyer(): TValidationErrors` - проводит валидацию данных покупателя
+
+Инициирует событие: 
+FormErrors:validate - проведена валидация полей форм
 
 
 ### Слой коммуникации 
+
+#### Интерфейсы
+Тип полученых от сервера данных
+export type ApiResponse = {
+  total: number;
+  items: IProduct[];
+};
+
+Интерфейс отправляемых на сервер данных
+export interface IOrder extends IBuyer {
+  items: string[];
+  total: number;
+}
+
+Интерфейс ответа сервера
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
 
 #### Класс ShopAPI
 
@@ -206,3 +230,210 @@ address: "",
 
 `getCatalog(): Promise<IProduct[]>` - получает данные каталога
 `postOrder(order: IOrder): Promise<IOrderResult>` - Отправляет данные заказа
+
+### Слой представления 
+
+#### Интерфейсы
+
+Тип для формы оплаты
+export type TOrderFormInfo = Pick<IBuyer, 'payment' | 'address'>; 
+
+Тип для формы контактных данных
+export type TContactFormInfo = Pick<IBuyer, 'email' | 'phone'>; // 
+
+Интерфейс заголовка страницы
+interface IHeader {
+    counter: number;
+}
+
+Интерфейс галереи
+interface IGallery {
+  catalog: HTMLElement[];
+}
+
+Тип ключей категории товара
+type CategoryKey = keyof typeof categoryMap;
+
+Интерфейс корзины
+export interface IBasket {
+  total: number;
+}
+
+Интерфейс единичного объекта корзины
+export interface IBasketItem extends Pick<IProduct, "title" | "price"> {
+  index: number;
+}
+
+Интерфейс состояния валидации формы
+interface IFormState {
+	valid: boolean;
+	errors: string[];
+}
+
+
+#### Классы представления
+
+Все классы представления отвечают за отображение внутри своего контейнера передаваемого в них контента. В классах отсутствует логика или данные
+
+### Класс Modal
+
+Реализует пустое модальное окно. Предоставляет методы `open` и `close` для открытия и закрытия.  Устанавливает слушатели для закрытия по кнопке Esc, по клику вне окна  и кнопке-крестику. Конструктор класса принимает контейнер и брокер событий.
+
+#### Класс Header
+
+Реализует отображение заголовка страницы. Конструктор класса принимает контейнер и брокер событий.
+Наследуется от базового класса Component<IHeader>
+
+Содержит следующие данные :
+protected counterElement : HTMLElement; - элемент счетчика количества предметов в корзине
+protected headerButton: HTMLButtonElement; - кнопка корзины
+
+Предоставляет сеттер для отображения количества предметов в корзине.
+set counter(value:number) 
+
+Устанавливает слушатель клика по иконке корзины с передачей события.
+
+#### Класс Gallery
+
+Реализует отображение галереи карточек.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от базового класса Component<IGallery>
+
+Содержит следующие данные :
+protected catalogList: HTMLElement; - элемент галереи карточек
+
+Предоставляет сеттер для получения карточек и отображения галереи.
+set catalog(items: HTMLElement[])
+
+#### Класс BaseCard
+
+Реализует класс базовой карточки для дальнейшего наследования.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от базового класса Component<IProduct>
+
+Содержит следующие данные :
+protected cardTitle: HTMLElement; - элемент наименования товара
+protected cardPrice: HTMLElement; - элемент цены товара
+protected currentPrice: string | null = ""; -временная переменная
+protected cardCategory: HTMLElement; - элемент категории товара
+protected cardImage: HTMLImageElement; - элемент картинки товара
+
+Предоставляет сеттеры для получения данных товара и сохранения их в DOM-элементах карточки.
+set title(title: string) - устанавливает название товара
+set price(price: string | null)- устанавливает цену товара
+set category(category: string) - устанавливает категорию товара
+set image(image: string) - устанавливает картинку товара
+
+
+
+#### Класс CardCatalog
+
+Реализует отображение карточки в галерее. Конструктор класса принимает контейнер и брокер событий.
+Наследуется от класса базовой карточки BaseCard 
+
+Не содержит данных 
+
+Не предоставляет сеттеры или методы.
+
+Устанавливает слушатель клика по карточке с вызовом функции onClick
+
+#### Класс CurrentCard
+
+Реализует класс превью текущей карточки.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от класса базовой карточки BaseCard 
+
+Содержит следующие данные :
+protected cardButton: HTMLButtonElement; - кнопка "Добавить в корзину/Удалить из корзины"
+protected cardDescription: HTMLElement; - Описание товара
+
+Предоставляет сеттеры для получения данных товара и сохранения их в DOM-элементах карточки.
+set buttonState(state: boolean) - задает состояние кнопки "Включена/отключена"
+set description(description: string | null) - задает описание товара
+set button(value: string) - задает текст на кнопке
+
+Устанавливает слушатель клика по карточке с вызовом функции onClick
+
+#### Класс Basket
+
+Реализует класс корзины.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от базового класса Component<IBasket>
+
+Содержит следующие данные :
+protected basketItems: HTMLElement; - элементы продуктов в корзине
+protected totalPrice: HTMLElement;    - общая цена продуктов в корзине
+protected orderButton: HTMLButtonElement; - кнопка "Оформить"
+
+Предоставляет сеттеры для получения данных товара и сохранения их в DOM-элементах карточки.
+set items(items: HTMLElement[]) - заполняет список товаров в корзине и включает кнопку "оформить"
+set emptyBasket(state: boolean) - отображает пустую корзину, отключает кнопку "оформить"
+set total(value: number) - отображает суммарную стоимость товаров
+
+Устанавливает слушатель клика по карточке с вызовом события "Корзина открыта"
+
+#### Класс BasketItem
+
+Реализует класс элемента корзины.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от базового класса Component<IBasketItem>
+
+Содержит следующие данные :
+protected itemIndex: HTMLElement; - элемент номера товара по порядку
+protected cardTitle: HTMLElement; - элемент названия товара
+protected cardPrice: HTMLElement; - элемент цены товара
+protected buttonDelete: HTMLButtonElement; - элемент кнопкы удаления товара из корзины
+
+Предоставляет сеттеры для получения данных товара и сохранения их в DOM-элементах карточки.
+set index(value: number) - отображает номер по порядку элемента
+set title(title: string) - отображает название товара
+set price(price: number) - отображает цену товара
+
+Устанавливает слушатель клика по карточке с вызовом функции onClick
+
+#### Класс Form
+
+Реализует класс базовой формы для дальнейшего наследования.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от базового класса Component<IFormState>
+
+Содержит следующие данные :
+protected _submit: HTMLButtonElement; - кнопка подтверждения
+protected _errors: HTMLElement; - подсказка об ошибках валидации
+
+Предоставляет сеттеры для получения данных товара и сохранения их в DOM-элементах карточки.
+set valid(value: boolean) - включает кнопку
+set errors(value: string) - отображает подсказку об ошибках валидации
+
+
+Устанавливает события :
+`${this.container.name}.${String(field)}:change` - внесение изменений в поля ввода
+`${this.container.name}:submit` - нажатие кнопки подтверждения
+
+#### Класс OrderForm
+
+Реализует класс формы заказа.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от класса базовой формы Form<TOrderFormInfo>
+
+Содержит следующие данные :
+protected paymentButtons: HTMLButtonElement[]; - кнопки выбора типа оплаты
+protected addressInput: HTMLInputElement; - поле ввода адреса
+protected selectedPayment: TPayment = ""; - выбранный тип оплаты
+
+Не предоставляет сеттеров или методов
+
+Устанавливает события :
+order.payment:change - выбор типа оплаты
+order.address:change - изменение данных в поле ввода адреса
+
+#### Класс ContactsForm
+
+Реализует класс формы контактных данных.  Предоставляет ряд сеттеров.  Конструктор класса принимает контейнер и брокер событий.
+Наследуется от класса базовой формы Form<TOrderFormInfo>
+
+Содержит следующие данные :
+  protected emailInput: HTMLInputElement; - поле ввода email
+  protected phoneInput: HTMLInputElement; - поле ввода телефона
+
+
+Не предоставляет сеттеров или методов
+
+Устанавливает события :
+contact.email:change - изменение данных в поле ввода email
+contact.phone:change - изменение данных в поле ввода телефона
+
+
