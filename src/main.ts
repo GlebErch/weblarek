@@ -1,10 +1,10 @@
 import "./scss/styles.scss";
 import { Api } from "./components/base/Api.ts";
 import { API_URL, CDN_URL } from "./utils/constants.ts";
-import { ShopAPI } from "./components/extend/ShopAPI.ts";
+import { IOrder, ShopAPI } from "./components/extend/ShopAPI.ts";
 import { EventEmitter } from "./components/base/Events";
 import { cloneTemplate, ensureElement } from "./utils/utils";
-import { IOrder, IProduct, TPayment } from "./types";
+import { IProduct, TPayment } from "./types";
 import { ModelCatalog } from "./components/models/modelcatalog.ts";
 import { ModelBasket } from "./components/models/modelbasket.ts";
 import { ModelBuyer } from "./components/models/modelbuyer.ts";
@@ -59,6 +59,7 @@ events.on("initialData:loaded", () => {
     });
     return cardInstant.render(item);
   });
+  console.log(cardsArray);
   gallery.render({ catalog: cardsArray });
 });
 
@@ -68,13 +69,15 @@ events.on("card:select", (item: IProduct) => {
 });
 
 // Создание превью текущей карточки:
+const card = new CurrentCard(cloneTemplate(cardPreviewTemplate), {
+  onClick: () => {
+    events.emit("current.button:click", card);
+  },
+});
+
 events.on("current:changed", () => {
   const item = catalogModel.getCurrent();
-  const card = new CurrentCard(cloneTemplate(cardPreviewTemplate), {
-    onClick: () => {
-      events.emit("current.button:click", card);
-    },
-  });
+
   if (item.price === null || item.price === undefined) {
     card.buttonState = false;
     card.button = "Недоступно";

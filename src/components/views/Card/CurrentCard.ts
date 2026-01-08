@@ -1,7 +1,9 @@
-import { CategoryKey, IActions } from "../../../types";
+import { IActions } from "../../../types";
 import { categoryMap } from "../../../utils/constants";
 import { ensureElement } from "../../../utils/utils";
 import { BaseCard } from "./BaseCard";
+
+export type CategoryKey = keyof typeof categoryMap;
 
 export class CurrentCard extends BaseCard {
   protected cardButton: HTMLButtonElement;

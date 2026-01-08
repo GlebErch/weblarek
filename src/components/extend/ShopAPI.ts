@@ -1,5 +1,19 @@
-import { ApiResponse, IProduct, IApi, IOrderResult, IOrder } from "../../types";
-//import { Api } from "../base/Api";
+import { IProduct, IApi, IBuyer } from "../../types";
+
+export type ApiResponse = {
+  total: number;
+  items: IProduct[];
+};
+
+export interface IOrder extends IBuyer {
+  items: string[];
+  total: number;
+}
+
+export interface IOrderResult {
+  id: string;
+  total: number;
+}
 
 export class ShopAPI {
   private cdn: string;

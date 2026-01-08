@@ -33,7 +33,4 @@ export class BasketCard extends BaseCard {
     this.itemIndex.textContent = String(value + 1);
   }
 
-  set title(title: string) {
-    this.cardTitle.textContent = title;
-  }
 }

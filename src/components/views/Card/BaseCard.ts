@@ -1,6 +1,7 @@
-import { IActions, IProduct } from "../../../types";
+import { IProduct} from "../../../types";
 import { ensureElement } from "../../../utils/utils";
 import { Component } from "../../base/Component";
+
 
 export interface ICard extends Pick<IProduct, "title" | "price"> {
   index: number;
@@ -11,14 +12,11 @@ export class BaseCard extends Component<ICard> {
   protected cardPrice: HTMLElement;
   protected currentPrice: string | null = "";
 
-  constructor(protected container: HTMLElement, events?: IActions) {
+  constructor(protected container: HTMLElement) {
     super(container);
     this.cardTitle = ensureElement<HTMLElement>(".card__title", this.container);
     this.cardPrice = ensureElement<HTMLElement>(".card__price", this.container);
 
-    if (events?.onClick) {
-      container.addEventListener("click", events.onClick);
-    }
   }
 
   set title(title: string) {
@@ -40,4 +38,5 @@ export class BaseCard extends Component<ICard> {
       this.currentPrice = null;
     }
   }
+
 }

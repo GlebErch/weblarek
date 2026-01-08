@@ -35,27 +35,9 @@ export type TPayment = "card" | "cash" | "";
 /*Тип для валидации данных покупателя*/
 export type TValidationErrors = Partial<Record<keyof IBuyer, string>>;
 
-export type ApiResponse = {
-  total: number;
-  items: IProduct[];
-};
-
-export interface IOrder extends IBuyer {
-  items: string[];
-  total: number;
-}
-
-export interface IOrderResult {
-  id: string;
-  total: number;
-}
 
 export interface IActions {
   onClick: (event: MouseEvent) => void;
 }
-
-export type CategoryKey = keyof typeof categoryMap;
-
-// тип для формы оплаты
 
 
