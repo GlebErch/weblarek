@@ -1,3 +1,5 @@
+import { categoryMap } from "../utils/constants";
+
 export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 
 export interface IApi {
@@ -52,6 +54,8 @@ export interface IActions {
   onClick: (event: MouseEvent) => void;
 }
 
-export type TOrderFormInfo = Pick<IBuyer, "payment" | "address">; // тип для формы оплаты
+export type CategoryKey = keyof typeof categoryMap;
 
-export type TContactFormInfo = Pick<IBuyer, "email" | "phone">; // тип для формы контактных данных
+// тип для формы оплаты
+
+

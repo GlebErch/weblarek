@@ -1,13 +1,13 @@
-import { ensureElement } from "../../utils/utils";
-import { Component } from "../base/Component";
-import { IEvents } from "../base/Events";
+import { ensureElement } from "../../../utils/utils";
+import { Component } from "../../base/Component";
+import { IEvents } from "../../base/Events";
 
 interface IFormState {
   valid: boolean;
   errors: string[];
 }
 
-export class Form<T> extends Component<IFormState> {
+export class Form extends Component<IFormState> {
   protected _submit: HTMLButtonElement;
   protected _errors: HTMLElement;
 
@@ -22,7 +22,7 @@ export class Form<T> extends Component<IFormState> {
 
     this.container.addEventListener("input", (e: Event) => {
       const target = e.target as HTMLInputElement;
-      const field = target.name as keyof T;
+      const field = target.name;
       const value = target.value;
       this.events.emit(`${this.container.name}.${String(field)}:change`, {
         field,

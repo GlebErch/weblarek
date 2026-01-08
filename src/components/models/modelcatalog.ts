@@ -32,7 +32,7 @@ export class ModelCatalog {
   setCurrent(item: IProduct): void {
     if (item) {
       this.current = item.id;
-      this.events.emit("current:changed", item);
+      this.events.emit("current:changed");
     }
   }
 

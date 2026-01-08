@@ -16,20 +16,20 @@ export class ModelBasket {
   addToBasket(item: IProduct): void {
     if (item) {
       this.basket.push(item);
-      this.events.emit("basket:change", this.basket);
+      this.events.emit("basket:change");
     }
   }
 
   removeFromBasket(item: IProduct): void {
     if (item) {
       this.basket = this.basket.filter((basket) => basket.id !== item.id);
-      this.events.emit("basket:change", this.basket);
+      this.events.emit("basket:change");
     }
   }
 
   clearBasket(): void {
     this.basket = [];
-    this.events.emit("basket:change", this.basket);
+    this.events.emit("basket:change");
   }
 
   priceBasket(): number {

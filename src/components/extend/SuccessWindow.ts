@@ -13,17 +13,6 @@ export class SuccessWindow extends Component<ISuccess> {
   protected _close: HTMLButtonElement;
   protected _total: HTMLElement;
 
-  protected ensureNodeList<T extends Element>(
-    selector: string,
-    parent: Element = this.container
-  ): NodeListOf<T> {
-    const elements = parent.querySelectorAll<T>(selector);
-    if (elements.length === 0) {
-      throw new Error(`Элементы не найдены: ${selector}`);
-    }
-    return elements;
-  }
-
   constructor(container: HTMLElement, actions: ISuccessActions) {
     super(container);
 

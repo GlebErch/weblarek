@@ -17,18 +17,22 @@ export class ModelBuyer {
 
   setPayment(payment: TPayment): void {
     this.buyer.payment = payment;
+    this.events.emit("buyer:change");
   }
 
   setEmail(email: string): void {
     this.buyer.email = email;
+    this.events.emit("buyer:change");
   }
 
   setPhone(phone: string): void {
     this.buyer.phone = phone;
+    this.events.emit("buyer:change");
   }
 
   setAddress(address: string): void {
     this.buyer.address = address;
+    this.events.emit("buyer:change");
   }
 
   getBuyer(): IBuyer {
@@ -58,8 +62,6 @@ export class ModelBuyer {
     if (!this.buyer.phone) {
       errors.phone = "Не указан телефон";
     }
-    this.events.emit("FormErrors:validate", errors);
-
     return errors;
   }
 }
