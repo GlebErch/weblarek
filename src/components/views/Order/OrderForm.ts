@@ -27,11 +27,6 @@ export class OrderForm extends Form {
       });
     });
 
-    this.addressInput.addEventListener("input", () => {
-      this.events.emit("order.address:change", {
-        value: this.addressInput.value,
-      });
-    });
   }
 
   set payment(value: TPayment) {
@@ -42,5 +37,9 @@ export class OrderForm extends Form {
         button.classList.remove("button_alt-active");
       }
     });
+  }
+
+  set address(value: string) {
+    this.addressInput.value = value;
   }
 }

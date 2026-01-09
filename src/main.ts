@@ -59,7 +59,6 @@ events.on("initialData:loaded", () => {
     });
     return cardInstant.render(item);
   });
-  console.log(cardsArray);
   gallery.render({ catalog: cardsArray });
 });
 
@@ -71,7 +70,7 @@ events.on("card:select", (item: IProduct) => {
 // Создание превью текущей карточки:
 const card = new CurrentCard(cloneTemplate(cardPreviewTemplate), {
   onClick: () => {
-    events.emit("current.button:click", card);
+    events.emit("current.button:click");
   },
 });
 
@@ -82,6 +81,7 @@ events.on("current:changed", () => {
     card.buttonState = false;
     card.button = "Недоступно";
   } else {
+    card.buttonState = true;
     if (basketModel.isInBasket(item)) {
       card.button = "Удалить из корзины";
     } else {
@@ -94,7 +94,7 @@ events.on("current:changed", () => {
   });
 });
 
-events.on("current.button:click", (card: CurrentCard) => {
+events.on("current.button:click", () => {
   const item = catalogModel.getCurrent();
   if (!basketModel.isInBasket(item)) {
     basketModel.addToBasket(item);
@@ -104,12 +104,9 @@ events.on("current.button:click", (card: CurrentCard) => {
     card.button = "В корзину";
   }
   const renderedCard = card.render(item);
-  console.log(item);
-  console.log(renderedCard);
   modal.render({
     content: renderedCard,
   });
-  // cardButtonState(item, card);
 });
 
 //Изменение корзины
@@ -164,8 +161,22 @@ function validateForm(): void {
   }
 }
 
+//Изменение покупателя
+events.on("buyer:change", () => {
+  const buyerData = buyerModel.getBuyer();
+  validateForm();
+  order.address = buyerData.address;
+  order.payment = buyerData.payment;
+  contacts.email = buyerData.email;
+  contacts.phone = buyerData.phone;
+});
+
 //Работа с формами
 events.on("order:open", () => {
+  order.address = buyerModel.getBuyer().address;
+  order.payment = buyerModel.getBuyer().payment;
+  contacts.email = buyerModel.getBuyer().email;
+  contacts.phone = buyerModel.getBuyer().phone;
   modal.render({
     content: order.render({
       valid: false,
@@ -177,13 +188,10 @@ events.on("order:open", () => {
 
 events.on("order.payment:change", (data: { value: TPayment }) => {
   buyerModel.setPayment(data.value);
-  validateForm();
-  order.payment = data.value;
 });
 
 events.on("order.address:change", (data: { value: string }) => {
   buyerModel.setAddress(data.value);
-  validateForm();
 });
 
 events.on("order:submit", () => {
@@ -193,17 +201,14 @@ events.on("order:submit", () => {
       errors: [],
     }),
   });
-  validateForm();
 });
 
-events.on("contact.email:change", (data: { value: string }) => {
+events.on("contacts.email:change", (data: { value: string }) => {
   buyerModel.setEmail(data.value);
-  validateForm();
 });
 
-events.on("contact.phone:change", (data: { value: string }) => {
+events.on("contacts.phone:change", (data: { value: string }) => {
   buyerModel.setPhone(data.value);
-  validateForm();
 });
 
 // Отправление формы заказа

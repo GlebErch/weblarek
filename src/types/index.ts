@@ -1,4 +1,3 @@
-import { categoryMap } from "../utils/constants";
 
 export type ApiPostMethods = "POST" | "PUT" | "DELETE";
 

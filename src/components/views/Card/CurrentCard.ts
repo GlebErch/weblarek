@@ -3,7 +3,7 @@ import { categoryMap } from "../../../utils/constants";
 import { ensureElement } from "../../../utils/utils";
 import { BaseCard } from "./BaseCard";
 
-export type CategoryKey = keyof typeof categoryMap;
+type CategoryKey = keyof typeof categoryMap;
 
 export class CurrentCard extends BaseCard {
   protected cardButton: HTMLButtonElement;

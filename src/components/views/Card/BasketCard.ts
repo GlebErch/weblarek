@@ -4,8 +4,6 @@ import { BaseCard } from "./BaseCard";
 
 export class BasketCard extends BaseCard {
   protected itemIndex: HTMLElement;
-  protected cardTitle: HTMLElement;
-  protected cardPrice: HTMLElement;
   protected buttonDelete: HTMLButtonElement;
 
   constructor(container: HTMLElement, actions?: IActions) {

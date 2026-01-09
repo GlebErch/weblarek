@@ -16,16 +16,12 @@ export class ContactsForm extends Form {
       ".form__input[name=phone]",
       this.container
     );
-    this.emailInput.addEventListener("input", () => {
-      this.events.emit("contact.email:change", {
-        value: this.emailInput.value,
-      });
-    });
+  }
 
-    this.phoneInput.addEventListener("input", () => {
-      this.events.emit("contact.phone:change", {
-        value: this.phoneInput.value,
-      });
-    });
+  set email(value: string) {
+    this.emailInput.value = value;
+  }
+  set phone(value: string) {
+    this.phoneInput.value = value;
   }
 }

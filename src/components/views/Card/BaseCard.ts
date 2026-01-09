@@ -10,7 +10,6 @@ export interface ICard extends Pick<IProduct, "title" | "price"> {
 export class BaseCard extends Component<ICard> {
   protected cardTitle: HTMLElement;
   protected cardPrice: HTMLElement;
-  protected currentPrice: string | null = "";
 
   constructor(protected container: HTMLElement) {
     super(container);
@@ -30,12 +29,10 @@ export class BaseCard extends Component<ICard> {
       if (this.cardPrice) {
         this.cardPrice.textContent = `${price} синапсов`;
       }
-      this.currentPrice = price;
     } else {
       if (this.cardPrice) {
         this.cardPrice.textContent = "Бесценно";
       }
-      this.currentPrice = null;
     }
   }
 
